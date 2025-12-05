@@ -23,7 +23,7 @@ export function ImagePreview({
   onSave,
   onNewImage,
   onCancel
-} : Props) {
+}: Props) {
 
   return (
     <View style={styles.container}>
@@ -32,22 +32,28 @@ export function ImagePreview({
         style={styles.image}
       />
       {/*Selecciones de botones */}
-      <View style={styles.button}>
-        <TouchableOpacity onPress={onCancel}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          onPress={onCancel}
+          style={styles.button}>
           <Ionicons
             name="close"
             size={32}
             color="white"
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onSave(uri)}>
+        <TouchableOpacity
+          onPress={() => onSave(uri)}
+          style={styles.button}>
           <Ionicons
             name="save-outline"
             size={32}
             color="white"
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onNewImage}>
+        <TouchableOpacity
+          onPress={onNewImage}
+          style={styles.button}>
           <Ionicons
             name="camera-outline"
             size={32}
@@ -63,23 +69,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#212242ff'
+    backgroundColor: 'rgba(0, 0, 0, 0.85)'
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 40,
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 10,
   },
   button: {
-    position: 'absolute',
-    bottom: 68,
-    left: 0,
-    right: 0,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#212242ff',
+    backgroundColor: "#212242ff",
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 6,
   },
-  image:{
+  image: {
     height: '100%',
     objectFit: 'contain', //como se comporta la imagen dependiendo en la imagen que esta para que no se deforme
   }

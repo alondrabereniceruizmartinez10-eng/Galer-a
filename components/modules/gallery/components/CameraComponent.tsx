@@ -26,7 +26,7 @@ export function CameraComponent({
     const [facing, setFacing] = useState<CameraType>('back');
 
     //referencia para el acceso a la camara
-    const ref = useRef <CameraView>(null);
+    const ref = useRef<CameraView>(null);
 
     if (!permission) {
         return <View />
@@ -59,19 +59,23 @@ export function CameraComponent({
 
     return (
         <View style={styles.container}>
-            <CameraView 
-            ref={ref}
-            style={styles.camera} 
-            facing={facing} />
+            <CameraView
+                ref={ref}
+                style={styles.camera}
+                facing={facing} />
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={onCancel}>
+                <TouchableOpacity
+                    onPress={onCancel}
+                    style={styles.button}>
                     <Ionicons
                         name="close"
                         size={32}
                         color="white"
                     />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={takePicture}>
+                </TouchableOpacity >
+                <TouchableOpacity
+                    onPress={takePicture}
+                    style={styles.button}>
                     <Ionicons
                         name="camera"
                         size={32}
@@ -96,26 +100,33 @@ export function CameraComponent({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-    },
-    message: {
-        textAlign: 'center',
-        paddingBottom: 10,
+        justifyContent: "center",
+        backgroundColor: "#212242ff",
     },
     camera: {
         flex: 1,
     },
     buttonContainer: {
-        position: 'absolute',
-        bottom: 64,
-        flexDirection: 'row',
-        backgroundColor: 'transparent',
-        width: '100%',
-        paddingHorizontal: 64,
+        position: "absolute",
+        bottom: 40,
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        paddingVertical: 6,
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        borderRadius: 10,
     },
     button: {
-        flex: 1,
-        alignItems: 'center',
+        backgroundColor: "#212242ff",
+        borderRadius: 10,
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+    },
+    message: {
+        textAlign: 'center',
+        paddingBottom: 10,
     },
     text: {
         fontSize: 24,
