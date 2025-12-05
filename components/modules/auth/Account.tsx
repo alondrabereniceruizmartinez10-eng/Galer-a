@@ -121,7 +121,7 @@ export default function Account({ session }: { session: Session }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => supabase.auth.signOut()}>
-            <Text style={styles.buttonText}>Cerrar Sesion</Text>
+            <Text style={styles.buttonText}>Cerrar</Text>
           </TouchableOpacity>
         </View>
       </View>

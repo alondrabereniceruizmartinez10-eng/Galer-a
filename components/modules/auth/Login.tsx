@@ -1,15 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import React, { useState } from 'react';
-import {
-  Alert,
-  AppState,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, AppState, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -76,7 +67,7 @@ export default function Auth() {
             autoCapitalize={'none'}
           />
 
-          <Text style={styles.txtocj}>Usuario</Text>
+          <Text style={styles.txtocj}>Contraseña</Text>
           <TextInput
             style={styles.inputText}
             onChangeText={(text) => setPassword(text)}
