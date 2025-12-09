@@ -1,8 +1,10 @@
 //galeria
 //botón para añadir la imagen
 
-import { useState } from "react";
-import { FlatList, Image, ImageBackground, StyleSheet, View } from "react-native";
+import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import { FlatList, Image, ImageBackground, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ImageModal } from "./components/ImageModal";
 import { ImagePicker } from "./components/ImagePicker";
 
 
@@ -10,6 +12,27 @@ export function GalleryView() {
 
     //estado para la coleccion de imagenes
     const [images, setImages] = useState<string[]>([]);
+    const[ selecterImage, setSelectedImage ] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function loadImages() {
+            const { data, error } = await supabase.storage
+                .from("gallery")
+                .list("public");
+            if (error) {
+                console.error("Error al listar imágenes:", error.message);
+                return;
+            }
+            const urls = data.map((file) => {
+                const { data } = supabase.storage
+                    .from("gallery")
+                    .getPublicUrl(`public / ${ file.name }`);
+                return data.publicUrl;
+            });
+            setImages(urls);
+        };
+        loadImages();
+    }, []);
 
     //recibir nueva imagen
     const onAdded = (uri: string) => {
@@ -17,12 +40,24 @@ export function GalleryView() {
         setImages([uri, ...images]);
     }
 
-    const renderItem = ({ item }: { item: string }) => (
-        <Image
-            source={{ uri: item }}
-            style={styles.image}
-        />
-    );
+    const deleteImage = async (url: string) => {
+        try {
+            // obtener el path relativo del archivo a partir de la URL pública
+            const path = url.split("/").slice(-2).join("/"); // ej: "public/photo-123.jpg"
+            const { error } = await supabase.storage
+                .from("Imagenes")
+                .remove([path]);
+            if (error) {
+                console.error("Error al eliminar:", error.message);
+            } else {
+                console.log("Imagen eliminada:", path);
+                setImages(images.filter((img) => img !== url));
+                setSelectedImage(null); // cerrar modal
+            }
+        } catch (err) {
+            console.error("Error:", err);
+        }
+    };
 
     return (
         <ImageBackground
@@ -42,7 +77,17 @@ export function GalleryView() {
                     keyExtractor={(item, index) => item.toString()}
                     numColumns={4}
                     contentContainerStyle={styles.gallery}
-                    renderItem={renderItem}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => setSelectedImage(item)}>
+                            <Image source={{ uri: item }} style={styles.image}/>
+                        </TouchableOpacity>
+                    )}
+                />
+
+                <ImageModal
+                imageUrl={selecterImage}
+                onCancel={() => setSelectedImage(null)}
+                onDelete={deleteImage}
                 />
 
             </View>

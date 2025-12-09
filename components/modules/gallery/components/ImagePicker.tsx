@@ -68,11 +68,10 @@ export function ImagePicker({ onImageSelected }: Props) {
     }
 
     const onTakedPicture = (uri: string) => {
-        //cerrar la camara
-        setCameraOpen(false);
-
         //cisualizar la imagen tomada
         setImage(uri);
+        //cerrar la camara
+        setCameraOpen(false);
     }
 
     const renderMenu = (

@@ -1,5 +1,6 @@
 //visualizar la imagen selccionada
 
+import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -14,22 +15,51 @@ type Props = {
   uri: string,
   onCancel: () => void,
   onSave: (uri: string) => void,
-  onNewImage: () => void, //void es un metodo de que no retorna nada
+  // abrir la cámara / seleccionar otra imagen (no se pasa uri aquí)
+  onNewImage: () => void,
 
 }
 
-export function ImagePreview({
-  uri,
-  onSave,
-  onNewImage,
-  onCancel
-}: Props) {
+export function ImagePreview({ uri, onCancel, onNewImage, onSave }: Props) {
+  const uploadImage = async (uri: string) => {
+    try {
+        const fileData = await fetch(uri).then(res => res.arrayBuffer()); 
+        // Subir directamente a la raíz del bucket
+        const fileName = `public/photo-${Date.now()}.jpg`;
+        const { error } = await supabase.storage
+            .from("gallery")  
+            .upload(fileName, fileData, {
+                contentType: "image/jpg",
+            });
+        if (error) {
+            console.error("Error al subir:", error.message);
+        } else {
+            console.log("Imagen subida correctamente:", fileName);
+            // Obtener URL pública
+            const { data } = supabase.storage
+                .from("gallery")  
+                .getPublicUrl(fileName);
+            console.log("URL pública obtenida:", data.publicUrl);
+            const{ data: insertData, error: dbError}  = await supabase
+            .from("imagen")
+            .insert([{
+                id: fileName,
+                url: data.publicUrl
+            }]);
+            // Guardar en el estado local (opcional)
+            onSave(data.publicUrl);
+        }
+    } catch (error) {
+        console.error("Error en uploadImage:", error);
+    }
+};
 
   return (
     <View style={styles.container}>
       <Image
         source={{ uri }}
         style={styles.image}
+        resizeMode="contain"
       />
       {/*Selecciones de botones */}
       <View style={styles.buttonContainer}>
@@ -43,7 +73,7 @@ export function ImagePreview({
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onSave(uri)}
+          onPress={() => uploadImage(uri)}
           style={styles.button}>
           <Ionicons
             name="save-outline"
@@ -89,8 +119,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
   },
-  image: {
-    height: '100%',
-    objectFit: 'contain', //como se comporta la imagen dependiendo en la imagen que esta para que no se deforme
-  }
+    image: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    }
 })
